@@ -46,6 +46,7 @@ El siguiente problema es tomado del documento realizado por [Joaquín Amat Rodri
 
 + Determinar la probabilidad de que un estudiante obtenga matricula de honor a partir de la nota obtenida en matemáticas
 
+</br></br></br>
 
 ## Preguntas que surgen
 
@@ -58,6 +59,8 @@ Preguntas planteadas en Gujarati(2009)
 
 
 Con el prósito de responder a esta preguntas, empezaremos con las caracteristicas de los datos
+
+</br></br></br>
 
 ## Datos
 
@@ -80,6 +83,7 @@ Distribución de matriculados:
 
 Utilizamos la función table() para encontrar la distribución de la variable categórica matricula:
 
+</br>
 
 ```{r}
 table(datos$matricula)
@@ -99,7 +103,7 @@ ggplot(data = datos, aes(x = as.factor(matricula), y = matematicas, color = matr
   theme(legend.position = "null")
 ```
 
-</br></br>
+</br></br></br>
 
 ## Modelo logit
 
@@ -119,12 +123,16 @@ g3=ggplot(data = datos, mapping = aes(x=matematicas, y=matricula)) +
 g3
 ```
 
+</br></br>
+
 Como se puede observar este modelo no permite ajustar una linea que represente los valores obtenidos en la prueba de matematicas.  Además de no cumplir con los supuestos planteados para el modelo de regresión lineal simple.
 
 + No normalidad de los errores
 + Heteroscedasticidad de u
 + Posibilidad de que $\widehat{Y_{i}}$ se encuentre por fuera del rango $[0,1]$, estimación de la probabilidad de $Y$
 + Valores muy bajos para $R^{2}$, dada la dificultad de ajuste para una lina reacta 
+
+</br></br>
 
 Estos problemas los podemos superar al plantear el siguiente modelo teniendo como base la función de distribución acumulada $F(x) = P(X \leq x) $ y la función logistica  $f(x)= \dfrac{1}{1+\exp{\{-x\}}}$
 
@@ -137,6 +145,8 @@ f=fx(x)
 plot(x,f, type="l", col="#BC2B6A", lwd=5)
 grid()
 ```
+
+</br></br>
 
 Empleando la funcion logistica se replantea el modelo partiendo del logaritmo de la razón de probabilidades en función de una combinación lineal de las variables independientes :
 
@@ -177,11 +187,17 @@ summary(modelo1)
 El modelo estimado en su forma original :
 
 $$\ln \Bigg( \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \widehat{\beta_{0}} + \widehat{\beta_{1}} \hspace{.2cm}x_{i}$$
+</br></br>
+
 Utilizamos la función inversa del logaritmo
 
 $$\Bigg( \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\bigg\{ \widehat{\beta_{0}} + \widehat{\beta_{1}} \hspace{.2cm} x_{i}}\bigg\}$$
+</br></br>
+
 $$\Bigg( \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\big\{ -9.793942  + 0.1563404 \hspace{.2cm}x_{i}}\big\}$$
-El coeficiente estimado $\widehat{\beta_{0}}$ corresponde al valor esperado del logaritmo de la razon de probabilidades ($\ln \Bigg(\dfrac{P_{i}}{(1-P_{i})}\Bigg)$ para un estudiante con nota cero en matemáticas.  Para leerlo enterminos de probabilidad realizamos la siguiente transformación:
+</br></br>
+
+El coeficiente estimado $\widehat{\beta_{0}}$ corresponde al valor esperado del logaritmo de la razón de probabilidades ($\ln \Bigg(\dfrac{P_{i}}{(1-P_{i})}\Bigg)$ para un estudiante con nota cero en matemáticas.  Para leerlo enterminos de probabilidad realizamos la siguiente transformación:
 
 
 ```{r}
@@ -195,6 +211,7 @@ exp(b0+b1*x)
 exp(b0+b1*x)/(1-exp(b0+b1*x))
 ```
 
+</br></br>
 
 Ahora para interpretar el aporte que genera un punto adicional en la nota de matemáticas sobre la probabilidad realizamos el siguiente cálculo:
 
@@ -211,7 +228,9 @@ Este valor representa  un aumento de 0.01169224 sobre la probabilidad de obtenre
 
 ```
 
-#### Interpretación de $\widehat{\beta_{0}}$
+</br></br>
+
+## Interpretación de $\widehat{\beta_{0}}$
 
 Cuando $x=0$ la probabilidad de obtener matricula es de $0.00005$ %
 
@@ -233,6 +252,7 @@ library(MASS)
 confint(object = modelo1, level = 0.95 )
 ```
 
+
 ```{r}
 # MEDIANTE BASE GRAPHICS SIN INTERVALOS DE CONFIANZA
 # Codificación 0,1 de la variable respuesta
@@ -252,6 +272,10 @@ abline(h=.50, col="red")
 
 grid()
 ```
+
+</br></br></br>
+
+## Bondad de ajuste del modelo
 
 ```{r}
 library(vcd)
@@ -285,6 +309,9 @@ library(pscl)
 pR2(modelo1)
 ```
 
+</br></br></br>
+
+## Predicción 
 
 Predecir la probabilidad de que un estudiante pueda tener matricuala de honor con un puntaje en matemáticas de 70 puntos
 

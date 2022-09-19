@@ -402,6 +402,7 @@ llamados <strong>modelos de probabilidad</strong></p></li>
 <li><p>Determinar la probabilidad de que un estudiante obtenga matricula
 de honor a partir de la nota obtenida en matemáticas</p></li>
 </ul>
+<p></br></br></br></p>
 </div>
 <div id="preguntas-que-surgen" class="section level2">
 <h2>Preguntas que surgen</h2>
@@ -416,6 +417,7 @@ Que pruebas de hipotesis se deben realizar?</li>
 <p>Preguntas planteadas en Gujarati(2009)</p>
 <p>Con el prósito de responder a esta preguntas, empezaremos con las
 caracteristicas de los datos</p>
+<p></br></br></br></p>
 </div>
 <div id="datos" class="section level2">
 <h2>Datos</h2>
@@ -442,6 +444,7 @@ head(datos, 4)</code></pre>
 <p>Distribución de matriculados:</p>
 <p>Utilizamos la función table() para encontrar la distribución de la
 variable categórica matricula:</p>
+<p></br></p>
 <pre class="r"><code>table(datos$matricula)</code></pre>
 <pre><code>&lt; table of extent 0 &gt;</code></pre>
 <p></br></br></p>
@@ -455,7 +458,7 @@ corresponde a la distribución de las notas por tipo de matricula :</p>
   theme_bw() +
   theme(legend.position = &quot;null&quot;)</code></pre>
 <p><img src="logit1_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p></br></br></p>
+<p></br></br></br></p>
 </div>
 <div id="modelo-logit" class="section level2">
 <h2>Modelo logit</h2>
@@ -488,6 +491,7 @@ F-statistic: 67.99 on 1 and 198 DF,  p-value: 2.248e-14</code></pre>
 
 g3</code></pre>
 <p><img src="logit1_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p></br></br></p>
 <p>Como se puede observar este modelo no permite ajustar una linea que
 represente los valores obtenidos en la prueba de matematicas. Además de
 no cumplir con los supuestos planteados para el modelo de regresión
@@ -502,6 +506,7 @@ probabilidad de <span class="math inline">\(Y\)</span></li>
 <li>Valores muy bajos para <span class="math inline">\(R^{2}\)</span>,
 dada la dificultad de ajuste para una lina reacta</li>
 </ul>
+<p></br></br></p>
 <p>Estos problemas los podemos superar al plantear el siguiente modelo
 teniendo como base la función de distribución acumulada $F(x) = P(X x) $
 y la función logistica <span class="math inline">\(f(x)=
@@ -514,6 +519,7 @@ f=fx(x)
 plot(x,f, type=&quot;l&quot;, col=&quot;#BC2B6A&quot;, lwd=5)
 grid()</code></pre>
 <p><img src="logit1_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p></br></br></p>
 <p>Empleando la funcion logistica se replantea el modelo partiendo del
 logaritmo de la razón de probabilidades en función de una combinación
 lineal de las variables independientes :</p>
@@ -577,20 +583,21 @@ Number of Fisher Scoring iterations: 5</code></pre>
 <p>El modelo estimado en su forma original :</p>
 <p><span class="math display">\[\ln \Bigg(
 \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \widehat{\beta_{0}}
-+ \widehat{\beta_{1}} \hspace{.2cm}x_{i}\]</span> Utilizamos la función
-inversa del logaritmo</p>
++ \widehat{\beta_{1}} \hspace{.2cm}x_{i}\]</span> </br></br></p>
+<p>Utilizamos la función inversa del logaritmo</p>
 <p><span class="math display">\[\Bigg(
 \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\bigg\{
 \widehat{\beta_{0}} + \widehat{\beta_{1}} \hspace{.2cm}
-x_{i}}\bigg\}\]</span> <span class="math display">\[\Bigg(
+x_{i}}\bigg\}\]</span> </br></br></p>
+<p><span class="math display">\[\Bigg(
 \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\big\{
--9.793942  + 0.1563404 \hspace{.2cm}x_{i}}\big\}\]</span> El coeficiente
-estimado <span class="math inline">\(\widehat{\beta_{0}}\)</span>
-corresponde al valor esperado del logaritmo de la razon de
-probabilidades (<span class="math inline">\(\ln
-\Bigg(\dfrac{P_{i}}{(1-P_{i})}\Bigg)\)</span> para un estudiante con
-nota cero en matemáticas. Para leerlo enterminos de probabilidad
-realizamos la siguiente transformación:</p>
+-9.793942  + 0.1563404 \hspace{.2cm}x_{i}}\big\}\]</span> </br></br></p>
+<p>El coeficiente estimado <span
+class="math inline">\(\widehat{\beta_{0}}\)</span> corresponde al valor
+esperado del logaritmo de la razón de probabilidades (<span
+class="math inline">\(\ln \Bigg(\dfrac{P_{i}}{(1-P_{i})}\Bigg)\)</span>
+para un estudiante con nota cero en matemáticas. Para leerlo enterminos
+de probabilidad realizamos la siguiente transformación:</p>
 <pre class="r"><code># coeficientes estimados
 b=modelo1$coefficients
 b0=b[1]; names(b0)= &quot; &quot;
@@ -603,6 +610,7 @@ exp(b0+b1*x)</code></pre>
 <pre class="r"><code>exp(b0+b1*x)/(1-exp(b0+b1*x))</code></pre>
 <pre><code>             
 5.579165e-05 </code></pre>
+<p></br></br></p>
 <p>Ahora para interpretar el aporte que genera un punto adicional en la
 nota de matemáticas sobre la probabilidad realizamos el siguiente
 cálculo:</p>
@@ -612,9 +620,11 @@ cálculo:</p>
 <p>Este valor representa un aumento de 0.01169224 sobre la probabilidad
 de obtenre matricula de honor por el incremento de un punto adicional en
 la nota de matemáticas</p>
-<div id="interpretación-de-widehatbeta_0" class="section level4">
-<h4>Interpretación de <span
-class="math inline">\(\widehat{\beta_{0}}\)</span></h4>
+<p></br></br></p>
+</div>
+<div id="interpretación-de-widehatbeta_0" class="section level2">
+<h2>Interpretación de <span
+class="math inline">\(\widehat{\beta_{0}}\)</span></h2>
 <p>Cuando <span class="math inline">\(x=0\)</span> la probabilidad de
 obtener matricula es de <span class="math inline">\(0.00005\)</span>
 %</p>
@@ -654,6 +664,10 @@ abline(h=.50, col=&quot;red&quot;)
 
 grid()</code></pre>
 <p><img src="logit1_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p></br></br></br></p>
+</div>
+<div id="bondad-de-ajuste-del-modelo" class="section level2">
+<h2>Bondad de ajuste del modelo</h2>
 <pre class="r"><code>library(vcd)
 predicciones &lt;- ifelse(test = modelo1$fitted.values &gt; 0.5, yes = 1, no = 0)
 mc &lt;- table(modelo1$model$matricula, predicciones,
@@ -679,6 +693,10 @@ pR2(modelo1)</code></pre>
 <pre><code>fitting null model for pseudo-r2</code></pre>
 <pre><code>         llh      llhNull           G2     McFadden         r2ML         r2CU 
  -83.5366186 -111.3550233   55.6368095    0.2498172    0.2428425    0.3615832 </code></pre>
+<p></br></br></br></p>
+</div>
+<div id="predicción" class="section level2">
+<h2>Predicción</h2>
 <p>Predecir la probabilidad de que un estudiante pueda tener matricuala
 de honor con un puntaje en matemáticas de 70 puntos</p>
 <pre class="r"><code>newdata1 &lt;- data.frame(matematicas=c(30,40,50,60,70))
@@ -690,7 +708,6 @@ newdata1</code></pre>
 3          50 0.121647088
 4          60 0.398068206
 5          70 0.759489505</code></pre>
-</div>
 </div>
 </div>
 
