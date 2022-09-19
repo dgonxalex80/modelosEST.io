@@ -1,0 +1,8 @@
+---
+title: "Modelos Estadísticos para la toma de decisiones"
+---
+
+
+```{r, echo=FALSE, out.width="80%", fig.align = "center"}
+knitr::include_graphics("img/banner3.png")
+```

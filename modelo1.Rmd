@@ -1,0 +1,669 @@
+---
+title: "**Modelo de Regresión Lineal**"
+author: "David Arango </br> Daniel Gonzalez"
+subtitle: <span style="color:#ad6395">**Unidad 1**</span>
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+  html_document:
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    theme: flatly
+---
+
+```{r setup, include = F, message = F}
+if(!require(pacman)) install.packages("pacman"); library(pacman)
+pacman::p_load("tidyverse", "knitr", "HH", "car", "rgl", "sampling")
+#source("functions.R", local = knitr::knit_global())
+library(modelstat)
+```
+
+
+## Introducción
+
+</br>
+
+En muchas ocasiones es posible diseñar experimentos estadísticos controlados, en los cuáles es factible el estudio simultáneo de varios factores, aplicando procedimientos de aleatorización apropiados, en lo que se conoce como diseño y análisis de experimentos.
+
+Sin embargo, en muchas ocasiones sólo se cuenta con un conjunto de datos sobre los cuáles es difícil esperar que hayan sido observados en condiciones estrictamente controladas, y de los cuáles también en pocas ocasiones se tienen réplicas para calcular el error experimental.
+
+Cuando se enfrenta la situación anterior lo más apropiado es aplicar los **métodos de regresión**, que permiten establecer asociaciones entre variables de interés, donde la relación usual no es necesariamente de causa - efecto. En principio, consideramos una asociación lineal entre una variable respuesta $Y$ y una variable predictora $X$.
+
+---
+
+</br></br>
+
+## Ejemplo
+
+Se tienen datos de un proceso de generación de papel apartir de madera y se desea establecer la relación entre la biomasa de un arbol (Y, en toneladas) y la altura del arbol (X, en metros). Veamos una gráfica de dispersión de los datos:
+
+```{r, echo = F, message = F, fig.align = 'center', out.width = '60%'}
+data("arboles")
+plot(arboles[,3:5])
+```
+
+---
+
+</br></br>
+
+## Significados de la regresión
+
+La regresión tiene dos significados:
+  
+
+</br>
+
+1. Podemos verla a partir de la distribución conjunta de las variables ${X}$ e ${Y}$, en la cual podemos definir la distribución condicional de ${Y\vert X}$, esto es ${f(Y\vert X)}$, y determinar ${E(Y\vert X)}$.  En este caso la regresión pretende ajustar la curva correspondiente a ${E(Y\vert X)}$.
+
+```{r fig21, echo = F, fig.align = 'center', out.width = '70%'}
+# knitr::include_graphics("figures/RARep.png")
+```
+
+---
+
+</br>
+
+2. Dado un conjunto de pares de datos ${(X,Y)}$, puede asumirse una forma funcional para la curva de regresión y tratar de ajustarla a los datos minimizando el error de ajuste.
+```{r, echo = F, message = F, fig.align = 'center', out.width = '80%'}
+require(ggplot2)
+#ggplot(arboles,aes(x=altura,y=bio_total))+geom_point()+geom_smooth(method = "loess",se = F)+theme_bw()
+```
+
+
+---
+
+</br></br>
+
+## Supuestos
+
+* La variable respuesta ${Y}$ es una variable aleatoria cuyos valores se observan mediante la selección de los valores de la variable predictora ${X}$ en un intervalo de interés.
+
+* Por lo anterior, la variable predictora ${X}$ no es considerada como variable aletatoria, sino como un conjunto de valores fijos que representan los puntos de observación, que se seleccionan con anticipación y se miden sin error.  
+
+  Sin embargo, si esto último no se cumple, el método de estimación de mínimos cuadrados ordinarios para los parámetros del modelo de regresión puede seguir siendo válidos si los errores en los valores de la variable predictora son pequeños en comparación con los errores aleatorios del modelo ${\varepsilon_i}$.
+
+* Los datos observados ${(x_i,y_i),\ i=1,\ldots,n}$, constituyen una muestra representativa de un medio acerca del cual se desea generalizar. Si no es así, no es apropiado realizar inferencias en un rango de los datos por fuera del considerado.
+
+* El modelo de regresión es lineal en los parámetros. Es decir, ningún parámetro de la regresión aparece como el exponente o es dividido o multiplicado por otro parámetro, o cualquier otra función.
+
+Sin embargo, la línea de ajuste puede tener una curvatura (no ser lineal en ${X}$ y/o en ${Y}$), caso en el cual mediante una transformación conveniente de las variables (${X}$ y/o ${Y}$), es posible aplicar las técnicas de regresión lineal sobre estas nuevas variables.
+
+* Si la ecuación de regresión seleccionada es correcta, cualquier variabilidad en la variable respuesta que no puede ser explicada exactamente por dicha ecuación, es debida a un error aleatorio.
+
+* Los valores observados de la variable respuesta no se encuentran estadísticamente correlacionados. Se supone que cada valor observado de ${Y}$ está constituído por un valor real y una componente aleatoria.
+
+* El modelo de regresión con una muestra de ${n}$ pares de datos ${(X_i, Y_i)}$ es:
+
+</br>
+
+$$
+Y_i = Y\vert X_i = E\left[Y \vert X_i\right] + \varepsilon_i, \ i=1,2,\ldots,n
+\label{eq:eq1}
+\tag{2.1}
+$$
+
+con
+$$
+E\left[Y \vert X_i\right] = \beta_0 + \beta_1 X_i
+$$
+
+</br>
+
+
+* Los errores aleatorios $\large \varepsilon_{i}\sim N(0,\sigma^{2}), i=1,2,\ldots,n$.
+
+* Los errores aleatorios $\large \varepsilon_i$ son estadísticamente independientes.
+
+
+</br>
+
+Por tanto:
+
+$$
+COV(\varepsilon_{i},\varepsilon_{j})=0, \forall_{i\neq j}, \quad COV(Y_{i},Y_{j})=0, \forall_{i\neq j}.
+$$
+
+</br>
+
+* La varianza de los errores aleatorios es ${\sigma^{2}, \forall_{i=1,2,\ldots,n}}$ (supuesto de varianza constante pero desconocida).
+
+Dado que los valores ${X_i}$ de la variable predictora no son considerados aleatorios y que los errores son independientes, la varianza de los ${Y_i}$ también es ${\sigma^{2}, \forall i}$ y por tanto este parámetro es independiente del punto de observación (es decir, del valor de ${X}$). Pero en el caso que este último supuesto no pueda aplicarse, entonces el método de regresión empleado será el de mínimos cuadrados ponderados.
+
+---
+
+</br></br>
+
+En resumen, los supuestos del modelo de regresión lineal simple se pueden expresar como:
+$$
+\varepsilon_i\overset{\text{iid}}{\sim} N(0,\sigma^2), i=1,2,\ldots,n
+$$
+  
+donde, iid es la abreviación de independiente e idénticamente distribuido.
+
+Estos supuestos tienen como consecuencia directa en la respuesta que:
+$$
+Y\vert X_i\overset{\text{ind}}{\sim} N(\beta_0 + \beta_1 X_i,\sigma^2)
+$$
+  
+donde, ind es la abreviación de independiente distribuido.
+
+</br></br>
+
+## Nomenclatura
+
+</br>
+
+* ${Y}$: Variable respuesta o dependiente.
+* ${X}$: Variable predictora, independiente o regresora.
+* ${\varepsilon}$: Error aleatorio
+* ${\beta_0}$, ${\beta_1}$: Parámetros de la regresión. ${\beta_0}$ es el intercepto y ${\beta_1}$ es la pendiente de la línea recta.
+* ${\widehat{\beta}_0}$: Estimador del parámetro ${\beta_0}$.
+* ${\widehat{\beta}_1}$: Estimador del parámetro ${\beta_1}$.
+* $e$: Residual, es una estimación del error aleatorio.
+* $\widehat{Y}$: Es la estimación de $E(Y\vert X)$ ó ${\mu_{Y\vert X}}$.
+
+</br></br>
+
+## Estimación por mínimos cuadrados ordinarios (MCO)
+
+</br>
+
+Para una selección preliminar de la variable predictora en un modelo de regresión simple (o sea que considera una sola variable predictora) es conveniente realizar el diagrama de dispersión ${Y}$ vs. ${X}$ y mirar si existe una tendencia lineal en la nube de puntos.
+
+Si la nube de puntos parece mejor ajustada por una curva hay que buscar una transformación apropiada en ${X}$ y/o ${Y}$ que lleve a un modelo lineal; en este caso el modelo de regresión lineal a ajustar será: ${Y^{*}\vert X^{*}_{i}=\beta_0 + \beta_1 X^{*}_{i} + \varepsilon_{i}, i=1,2,\ldots,n}$, donde ${Y^*}$ y ${X^*}$ son las variables ${Y}$ y ${X}$ transformadas. Más adelante se ampliará el tema de transformaciones que llevan a un modelo lineal.
+
+Debe tenerse claro que el método de mínimos cuadrados es un método numérico, no estadístico. La estadística opera a partir de los supuestos distribucionales asignados en el modelo de regresión.
+
+</br></br>
+
+## Objetivo del método MCO
+
+</br>
+
+Obtener estimaciones de los parámetros de regresión, es decir hallar valores de ${\beta_0}$ y ${\beta_1}$ que minimicen la suma de los cuadrados de los errores ${S(\beta_0,\beta_1)}$ definida a partir de $\eqref{eq:eq1}$ como:
+$$
+S(\beta_0,\beta_1) = \sum^n_{i=1} \varepsilon^2_i = \sum^n_{i=1} \left[Y_i - (\beta_0 + \beta_1X_i)\right]^2
+$$
+  
+A los valores que minimizan esta expresión se les conoce como estimadores de mínimos cuadrados y se les denota ${\widehat{\beta}_0}$ y ${\widehat{\beta}_1}$.
+
+</br></br>
+
+## Valor de los estimadores MCO
+
+Dados los pares de observaciones ${(x_1, y_1),\ldots,(x_n, y_n)}$, hallar ${\beta_0}$ y ${\beta_1}$ que minimicen a ${S(\beta_0,\beta_1)}$ implica resolver el siguiente sistema de ecuaciones:
+
+$$
+{\left.\frac{\partial S(\beta_0,\beta_1)}{\partial \beta_0}\right|_{\widehat{\beta}_0,\widehat{\beta}_1}=0}
+$$
+  
+$$
+{\left.\frac{\partial S(\beta_0,\beta_1)}{\partial \beta_1}\right|_{\widehat{\beta}_0,\widehat{\beta}_1}=0}
+$$
+
+---
+
+De lo cual surgen las denominadas ecuaciones normales:
+
+</br>
+
+$$
+{\sum^{n}_{i=1}y_i=n\widehat{\beta}_0+\widehat{\beta}_1\sum^{n}_{i=1}x_i}
+$$
+
+</br>
+
+$$
+{\sum^{n}_{i=1}{x_iy_i}=\widehat{\beta}_0\sum^{n}_{i=1}x_i+\widehat{\beta}_1\sum^{n}_{i=1}x^2_i}
+$$
+
+---
+
+</br>
+
+Y de éstas se obtiene que las estimaciones por mínimos cuadrados de los parámetros
+son:
+
+$$
+{\widehat{\beta}_0=\bar{y}-\widehat{\beta}_1\bar{x}}
+$$
+
+</br>
+
+$$
+\begin{aligned}
+{\widehat{\beta}_1}&=&{\frac{\sum\limits^n_{i=1} x_i \, y_i - \frac{\sum\limits^n_{i=1} x_i \, \sum\limits^n_{i=1} y_i}{n}} {\sum\limits^n_{i=1} x^2_i - \frac{\left(\sum\limits^n_{i=1} x_i\right)^2}{n}} = \frac{\sum\limits^n_{i=1} x_i \, y_i - n\,\bar{x} \, \bar{y}}{\sum\limits^n_{i=1} x^2_i - n\,\bar{x}^2}} \nonumber\\[0.5cm]
+&=& {\frac{\sum\limits^n_{i=1} (x_i-\bar{x}) (y_i-\bar{y})} {\sum\limits^n_{i=1} (x_i-\bar{x})^2} = \frac{\sum\limits^n_{i=1} y_i\, (x_i-\bar{x})} {\sum\limits^n_{i=1} (x_i-\bar{x})^2}}
+\end{aligned}
+$$
+
+</br></br>
+
+## Sumas de cuadrados y de productos cruzados
+
+</br>
+
+* Suma de cuadrados corregidos en ${x}$:
+$$
+{S_{xx}=\sum^n_{i=1}(x_i-\bar{x})^2=\sum^n_{i=1}x^2_i-n\bar{x}^2}
+$$
+
+</br>
+
+* Suma de cuadrados corregidos en ${y}$:
+$$
+{S_{yy}=\sum^n_{i=1}(y_i-\bar{y})^2=\sum^n_{i=1}y^2_i-n\bar{y}^2}
+$$
+
+---
+
+</br>
+
+* Suma de productos cruzados corregidos:
+$$
+{S_{xy}=\sum^n_{i=1}(x_i-\bar{x})(y_i-\bar{y})= \sum^n_{i=1}(x_i-\bar{x})y_i}
+$$
+
+</br></br>
+
+**NOTA:** ${\widehat{\beta}_1}$ puede ser expresado en función de ${S_{xy}}$ y de ${S_{xx}}$ así:
+$$
+{\widehat{\beta}_1=\frac{S_{xy}}{S_{xx}}}
+$$
+  
+</br></br>
+
+## Estimación por máxima verosimilitud (ML)
+
+El método de mínimos cuadrados produce los mejores estimadores lineales insesgados para los parámetros de la recta y puede ser usado para la estimación de parámetros de un modelo de regresión lineal sin consideraciones distribucionales sobre los errores.
+
+Sin embargo, para poder aplicar pruebas de hipótesis y construir intervalos de confianza, es necesario realizar y validar tales supuestos. Considerando para el modelo de regresión lineal simple los supuestos de normalidad, independencia y varianza constante para los errores, podemos usar el método de estimación de máxima verosimilitud (MLE).
+
+</br>
+
+Sean ${\left(x_1,y_1\right),\ldots,\left(x_n,y_n\right)}$ los ${n}$ pares de datos observados, entonces el modelo de regresión lineal simple es:
+
+$$
+{Y_i = Y\vert X_i=\beta_0+\beta_1X_i+\varepsilon_i,\ i=1,2,\ldots,n.}
+$$
+
+---
+
+</br>
+
+A la variable aleatoria ${\varepsilon_i}$, se le asignan los siguientes supuestos distribucionales:
+$$
+{\varepsilon_i\overset{\text{iid}}{\sim} N\left(0,\sigma^2\right),\ i=1,2,\ldots,n,}
+$$
+  
+Con base en lo anterior y asumiendo que los niveles o valores en que ${X}$ es observada son fijos, se obtiene que $${Y_i = Y\vert X_i \overset{\text{ind}}{\sim} N(E\left[Y\vert X_i\right],\sigma^2)}$$
+con
+
+$${E\left[Y\vert X_i\right]=\beta_0+\beta_1X_i}.$$
+
+---
+
+</br>
+
+Sean ${\textbf{x}=(x_1,x_2,\ldots,x_n)}$ y ${\textbf{y}=(y_1,y_2,\ldots,y_n)}$, entonces la función de verosimilitud ${L\left.(\beta _0,\beta_1,\sigma^2 \right|\textbf{x,y})}$ es hallada a partir de la densidad conjunta de las observaciones, ${f\left.(y_1,\dots,y_n\right|\beta_0,\beta_1,\sigma^2)}$, que por la condición de independencia es igual al producto de las densidades de probabilidad marginales, por tanto, podemos escribir,
+$$
+\begin{aligned}
+{L(\beta_0,\beta_1,\sigma^2\vert \textbf{x,y})}&{=f(y_1,\ldots,y_n\vert\beta_0,\beta_1,\sigma^2)}\nonumber\\
+&{=\prod\limits_{i=1}^n\frac{1}{\sqrt{2\pi\sigma^2}}\exp\left[-\frac{1}{2\sigma^2}(y_i-\beta_0-\beta_1x_i)^2\right]}\nonumber\\
+&{=(2\pi\sigma^2)^{-n/2}\exp\left[-\frac{1}{2\sigma^2}\sum\limits_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2\right]}
+\end{aligned}
+$$
+
+---
+
+</br>
+
+El objetivo es hallar los parámetros desconocidos ${\beta_0,\beta_1,\sigma^2}$, que maximicen ${L}$, o equivalentemente, que maximicen ${\ln L}$ (el logaritmo natural de ${L}$). 
+$$
+{\ln L=-\frac{n}{2}\ln(2\pi)-\frac{n}{2}\ln(\sigma^2)-\frac{1}{2\sigma^2}\sum\limits_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2}
+$$
+  
+Observe que para cualquier valor de ${\sigma^2}$ fijo, ${\ln L}$ es maximizado como una función de ${\beta_0}$ y ${\beta_1}$ por aquellos valores ${\widetilde{\beta}_0}$ y ${\widetilde{\beta}_1}$ que minimizan ${S(\beta_0,\beta_1)=\sum\limits_{i=1}^n(y_i-\beta_0-\beta_1x_i)^2}$ y así, los estimadores MLE $\ {\widetilde{\beta}_0}$ y ${\widetilde{\beta}_1}$ son iguales a los respectivos estimadores de mínimos cuadrados, ${\widehat{\beta}_0}$ y ${\widehat{\beta}_1}$.
+
+---
+
+</br>
+
+Para hallar el estimador MLE para ${\sigma^2}$ substituimos ${\widehat{\beta}_0}$ y 
+${\widehat{\beta}_1}$ en ${\ln L}$, y hallamos ${\sigma^2}$ que maximiza
+
+</br>
+
+$$
+{-\frac{n}{2}\ln(2\pi) - \frac{n}{2}\ln(\sigma^2) - \frac{1}{2\sigma^2}\sum\limits_{i=1}^n (y_i - \widehat{\beta}_0 - \widehat{\beta}_1x_i)^2}
+$$
+
+de donde obtenemos como estimador MLE de ${\sigma^2}$ a
+
+</br>
+
+$$
+{\widetilde{\sigma}^2 = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \widehat{\beta}_0 - \widehat{\beta}_1x_i)^2 = \frac{1}{n}\sum\limits_{i=1}^n (y_i - \widehat{y}_i)^2}
+$$
+
+---
+
+</br></br>
+
+Resumiendo, bajo el modelo de regresión lineal normal, es decir, con errores independientes e idénticamente distribuidos ${N\left(0, \sigma^2\right)}$, los estimadores de mínimos cuadrados para ${\beta_0}$ y ${\beta_1}$ son también estimadores de máxima verosimilitud y en tal caso, podemos construir intervalos de confianza y realizar pruebas de hipótesis basadas en las estimaciones obtenidas.
+
+También puede demostrarse que los estimadores MLE son de mínima varianza cuando son comparados con todos los posibles estimadores insesgados y son consistentes, es decir, a medida que aumenta el tamaño de muestra, la diferencia entre éstos y los respectivos parámetros se aproxima a cero.
+
+</br></br>
+
+## Estimación de la varianza $\sigma^2$
+
+Puede demostrarse que bajo los supuestos del modelo en relación a los errores, la esperanza del estimador de máxima verosimilitud de $\sigma^2$ es:
+
+</br>
+
+$$
+{E\left[\widetilde{\sigma}^2\right] = \left(\frac{n - 2}{n}\right) \sigma^2}
+$$
+
+</br>
+
+por tanto $\widetilde{\sigma}^2$ no es un estimador insesgado de $\sigma^2$, aunque si es asintóticamente insesgado, esto es, ${\lim\limits_{n\to\infty} E\left[\widetilde\sigma^2\right] = \sigma^2}$. Sin embargo, a partir de $\widetilde{\sigma}^2$ se puede obtener un estimador insesgado de la varianza, así:
+
+</br>
+
+$$
+{\widehat{\sigma}^2 = \left(\frac{n}{n - 2}\right) \widetilde{\sigma}^2 = \frac{\sum\limits_{i=1}^n (y_i - \widehat{y}_i)^2}{n-2}}
+$$
+
+</br>
+
+que cumple ${E\left[\widehat\sigma^2\right]=\sigma^2}$.
+
+</br></br>
+
+## Ecuación de regresión ajustada y residuales del modelo {#resid}
+
+Al tener estimados los parámetros del modelo de regresión lineal simple (por mínimos cuadrados o máxima verosimilitud), entonces se puede realizar una estimación de la  respuesta media $E\left[Y \vert X\right] = \mu_{Y\vert X}$, a través del modelo ajustado, así:
+$$
+\widehat{\mu}_{Y\vert x_i} = \widehat{y}_i = \widehat{\beta}_0 + \widehat{\beta}_1\, x_i = \bar{y} + (x_i-\bar{x})\,\widehat{\beta}_1.
+$$
+
+</br></br>
+
+A esta ecuación se le conoce como la ecuación de regresión ajustada, que en este caso corresponde a una recta ajustada.
+
+---
+
+A las diferencias entre los valores observados de la respuesta $y_i$ y los valores ajustados por el modelo de regresión $\widehat{y}_i$ (obtenidos de la ecuación de regresión ajustada) se les conoce como los residuales del modelo. Esto es, ${e_i=y_i-\widehat{y}_i}$ es el $i$-ésimo residual del modelo, que es una estimación del $i$-ésimo error aleatorio, $\varepsilon_i$.
+
+Los residuales del modelo tienen gran importancia ya que ellos determinan que tan bueno fue el ajuste del modelo y permitirán más adelante realizar las validaciones de los supuestos realizados sobre los errores aleatorios.
+
+</br></br>
+
+## Propiedades de los estimadores de mínimos cuadrados {#propbetas}
+
+Bajo los supuestos considerados respecto a los errores tenemos que:
+
+</br>
+
+1. ${\widehat\beta_0}$ y ${\widehat\beta_1}$ son combinaciones lineales de las variables aleatorias ${Y_1, \ldots, Y_n}$, pues estos pueden escribirse como:
+$$
+{\widehat\beta_0 = \sum^n_{i=1} m_i\, Y_i}
+$$
+  
+$$
+{\widehat\beta_1 = \sum^n_{i=1} c_i\, Y_i}
+$$
+
+---
+
+donde:
+
+$$
+{m_i = \frac{1}{n} - \bar{x}\, c_i}
+$$
+</br>
+
+$$
+{c_i = \frac{x_i - \bar{x}}{S_{xx}}}
+$$
+  
+</br>
+
+Se puede demostrar a través de cálculos directos que:
+
+$${\sum^n_{i=1} c_i = 0,\quad \quad \sum^n_{i=1}c_i\, x_i=1,}$$
+$${\sum^n_{i=1} m_i = 1,\quad \quad \sum^n_{i=1}m_i\, x_i=0,}$$
+$${\sum^n_{i=1} c_i^2 = \frac{1}{S_{xx}},\quad \quad \sum^n_{i=1} m_i^2 = \frac{\sum\limits_{i=1}^n x_i^2}{nS_{xx}}.}$$
+
+---
+
+</br>
+
+Además, como ${Y_1, \ldots, Y_n}$ son variables normales e incorrelacionadas, entonces ${\widehat\beta_0}$ y ${\widehat\beta_1}$ son \underline{variables aleatorias normales}.
+
+</br></br>
+
+2. El valor esperado de los estimadores, es:
+
+$$
+\begin{aligned}
+{E\left[\widehat\beta_0\right]} &= {E\left[\sum^n_{i=1} m_i\, Y_i\right] = \sum^n_{i=1} m_i\, E\left[Y_i\right]}\nonumber\\
+&= {\sum^n_{i=1} m_i(\beta_0 + \beta_1x_i)}\nonumber\\
+&= {\beta_0\sum^n_{i=1} m_i + \beta_1\sum^n_{i=1} m_i\, x_i=\beta_0}
+\end{aligned}
+$$
+
+</br>
+
+$$
+\begin{aligned}
+{E\left[{\widehat\beta_1}\right]} &= {E\left[\sum^n_{i=1} c_i\, Y_i\right]= \sum^n_{i=1} c_i\, E\left[Y_i\right]}\nonumber \\
+&= {\sum^n_{i=1} c_i(\beta_0 + \beta_1x_i)} = {\beta_0\sum^n_{i=1} c_i + \beta_1\sum^n_{i=1} c_i\, x_i = \beta_1}
+\end{aligned}
+$$
+
+---
+
+</br></br>
+
+3. La varianza de los estimadores, es:
+$$
+\begin{aligned}
+{V\left[\widehat\beta_0\right]} &= {V\left[\sum^n_{i=1} m_{i}\, Y_i\right] =  \sum^n_{i=1} m^2_i\, V\left[Y_i\right]}\nonumber\\
+&= {\sum^n_{i=1} m^2_i\, \sigma^2}\nonumber \\
+&= {\frac{\sigma^2\sum_{i=1}^n x_i^2}{nS_{xx}}}\\[0.7cm]
+\end{aligned}
+$$
+
+</br>
+
+$$
+\begin{aligned}
+{V\left[\widehat\beta_1\right]} &= {V\left[\sum^n_{i=1} c_{i}\, Y_{i}\right] =  \sum^n_{i=1} c^2_i\, V\left[Y_i\right]}\nonumber\\
+&= {\sum^n_{i=1} c^2_i\sigma^2}\nonumber\\
+&= {\frac{\sigma^2}{S_{xx}}}
+\end{aligned}
+$$
+
+---
+
+</br></br>
+
+4. La varianza de la respuesta ajustada en un valor dado ${X=x_i}$, es:
+$$
+\begin{aligned}
+{V\left[\widehat{Y}_i\right]} &= {V\left[\widehat\beta_0 + \widehat\beta_1x_i\right]}\nonumber\\
+&= {V\left[\sum^n_{j=1} (m_j + x_i\, c_j) Y_j\right]}\nonumber\\
+&= {\sum^n_{j=1} (m_j + x_i\, c_j)^2 V(Y_j)}\nonumber\\
+&= {\sigma^2\sum^n_{j=1} \left[\frac{1}{n} + (x_i-\bar{x}) c_j\right]^2}\nonumber\\
+&= {\sigma^2\left[\frac{1}{n} + \frac{(x_i-\bar{x})^2}{S_{xx}}\right]}
+\end{aligned}
+$$
+
+---
+
+</br></br>
+
+5. La covarianza (cov) entre los estimadores de los parámetros es:
+$$
+\begin{aligned}
+{\text{cov}\left[\widehat\beta_0,\widehat\beta_1\right]} &= {\text{cov}\left[\sum^n_{i=1} m_i\, Y_i,\sum^n_{i=1} c_i\, Y_i\right]}\nonumber\\
+&= {\sum^n_{i=1} m_i\, c_i\, \text{cov}\left[Y_i, Y_i\right] + \sum^n_{i=1}\sum^n_{j\neq i} m_i\, c_j\, \text{cov}\left[Y_i, Y_j\right]}\nonumber\\
+&= {\sum^n_{i=1} m_i\, c_i V\left[Y_i\right]}\nonumber\\
+&= {\sigma^2\sum^n_{i=1} m_i\, c_i}\nonumber\\
+&= {-\frac{\sigma^2\bar{x}}{S_{xx}}}
+\end{aligned}
+$$
+
+---
+
+</br></br>
+
+6. La covarianza entre la variable respuesta y su correspondiente estimador en un valor dado ${X=x_i}$ es:
+
+$$
+\begin{aligned}
+{\text{cov}\left[Y_{i}, \widehat{Y}_{i}\right]} &= {\text{cov}\left[Y_{i}, \widehat\beta_0 + \widehat\beta_1x_i\right]}\nonumber\\
+&= {\text{cov}\left[Y_i, \sum^n_{j=1} (m_j + x_i\, c_j) Y_j\right]}\nonumber\\
+&= {(m_i + x_i\, c_i)\text{cov}\left[Y_i, Y_i\right] + \sum^n_{j\neq i}(m_j + x_i\, c_j)\text{cov}\left[Y_i, Y_j\right]}\nonumber\\
+&= {\sigma^2(m_i + x_i\, c_i)}\nonumber\\[0.2cm]
+&= {\sigma^2\left[\frac{1}{n} + \frac{(x_i - \bar{x})^2}{S_{xx}}\right]}
+\end{aligned}
+$$
+
+---
+
+</br></br>
+
+7. La suma de los residuales del modelo de regresión con intercepto es siempre cero:
+
+$$
+{\sum^n_{i=1} e_i = 0}
+$$
+  
+</br></br>
+
+8. La suma de los valores observados ${y_i}$ es igual a la suma de los valores ajustados 
+${\widehat{y}_i}$:
+
+$$
+\sum^n_{i=1} y_i = \sum^n_{i=1} \widehat{y_{i}}
+$$
+
+---
+
+</br></br>
+
+9. La línea de regresión siempre pasa a través del centroide de los datos ${(\bar{x},\bar{y})}$.
+
+</br></br>
+
+10. La suma de los residuales ponderados por el correspondiente valor de la variable predictora es cero:
+$$
+{\sum^n_{i=1} x_i\, e_i = 0}
+$$
+
+</br></br>
+
+11. La suma de los residuales ponderados por el correspondiente valor ajustado es siempre igual a cero:
+$$
+{\sum^n_{i=1}\widehat{y}_i\, e_i = 0}
+$$
+  
+</br></br></br>
+
+## Inferencias sobre los parámetros del modelo de regresión
+  
+</br>
+
+### Inferencias sobre el intercepto $\beta_0$
+  
+</br>
+
+1. **Intervalos de confianza**
+  
+Se puede demostrar que bajo los supuestos del modelo de regresión, se cumple que:
+
+$$
+{T} = {\frac{\widehat\beta_0 - \beta_0}{\sqrt{\frac{\widehat{\sigma}^2\sum^n_{i=1} x^2_i}{nS_{xx}}}} \sim t_{n - 2}}
+\label{eq:eq2}
+\tag{2.2}
+$$
+  
+con ${t_{n-2}}$ la variable aleatoria ${t}$-Student con ${n-2}$ grados de libertad.
+
+---
+
+</br>
+
+Por tanto un intervalo de confianza del ${(1-\alpha)\%}$ para ${\beta_0}$ es:
+
+$$
+{\widehat\beta_0 \pm t_{\alpha/2, n-2}\times \sqrt{\frac{\widehat{\sigma}^2\sum^n_{i=1} x^2_i}{nS_{xx}}}}
+$$
+  
+   donde ${t_{\alpha/2, n - 2}}$ es el percentil ${1 - \alpha/2}$ de la distribución ${t}$-Student con ${n - 2}$ grados de libertad.
+
+---
+
+</br></br>
+
+2. **Prueba de Hipótesis sobre la significancia del intercepto**
+
+   Para probar si ${\beta_0}$ es significativamente distinto de cero:
+\begin{eqnarray}
+{H_0:\ \beta_0 = 0 }\nonumber\\
+{H_1:\ \beta_0 \neq 0} \nonumber
+\end{eqnarray}
+
+El estadístico de prueba es la ec. $\eqref{eq:eq2}$ y el valor observado de éste (${T_0}$) se halla reemplazando ${\beta_0}$ por 0. Se rechaza ${H_0}$ si ${|T_0| > t_{\alpha/2, n - 2}}$.
+
+---
+
+</br></br>
+
+### Inferencias sobre la pendiente $\beta_1$
+
+</br>
+
+**1. Intervalos de confianza**
+
+Se puede demostrar que bajo los supuestos del modelo de regresión, se cumple que:
+
+$$
+{T}={\frac{\widehat\beta_1-\beta_1}{\sqrt{\frac{\widehat{\sigma}^2}{S_{xx}}}} \sim t_{n-2}}
+\label{eq:eq3}
+\tag{2.3}
+$$
+  
+Por tanto un intervalo de confianza del ${(1-\alpha)\%}$ para ${\beta_1}$ es:
+
+$$
+{\widehat\beta_1 \pm t_{\alpha/2,n-2}\times \sqrt{\frac{\widehat{\sigma}^2}{S_{xx}}}}
+$$
+
+---
+
+</br></br>
+
+**2. Prueba de Hipótesis sobre la significancia de la pendiente**
+
+</br>
+  
+   Para probar si ${\beta_1}$ es significativamente distinto de cero: 
+$$
+\begin{aligned}
+{H_0:\ \beta_1 = 0}\nonumber\\
+{H_1:\ \beta_1 \neq 0}\nonumber
+\end{aligned}
+$$
+  
+El estadístico de prueba es la ec. $\eqref{eq:eq3}$ y el valor observado de éste (${T_0}$) se halla reemplazando ${\beta_1}$ por 0. Se rechaza ${H_0}$ si ${|T_0|>t_{\alpha/2,n-2}}$.
+
+</br></br>
+
+**NOTA:** Note que si la pendiente es significativa, entonces el modelo de RLS entre la predictora y la respuesta, también lo es.

@@ -1,0 +1,28 @@
+name: " "
+output_dir: "."
+navbar:
+  title: " "
+  left:
+    - text: "Modelos Estadísticos"
+      href: index.html
+    - text: "Unidad 1"
+      menu:
+      - text: "simulación 1"
+        href: simulaMCO.html
+    - text: "Unidad 2"
+      menu:
+      - text: "Modelo RLS"
+        href: modelo1.html
+    - text: "Unidad 3"
+      menu:
+      - text: "Modelo Logit"
+        href: logit1.html
+        
+right:
+    - icon: fab fa-github 
+      href: https://github.com/dgonxalex80/modelosEST.io         
+output:
+  html_document:
+    theme: flatly
+    css: style.css        
+        
