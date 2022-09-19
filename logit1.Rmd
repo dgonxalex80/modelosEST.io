@@ -134,7 +134,26 @@ Como se puede observar este modelo no permite ajustar una linea que represente l
 
 </br></br>
 
-Estos problemas los podemos superar al plantear el siguiente modelo teniendo como base la función de distribución acumulada $F(x) = P(X \leq x) $ y la función logistica  $f(x)= \dfrac{1}{1+\exp{\{-x\}}}$
+Estos problemas los podemos superar al plantear el siguiente modelo teniendo como base la función de distribución acumulada $F(x) = P(X \leq x) $ y la función logistica:  
+
+$$f(z)= \dfrac{1}{1+\exp{\{-z\}}} = \dfrac{\exp{\{z\}}}{1-\exp{\{z\}}}$$
+
+
+De esta ecuación podemos definir :
+
+$$P_{i} = P(Y=1 | X =x) =  \dfrac{1}{1+\exp{\{-\beta_{0}-\beta_{1}x_{i}\}}} +  u_{i}^{*}= \dfrac{\exp{\{ \beta_{0}-\beta_{1}x_{i} \}}}{1-\exp{\{\beta_{0}-\beta_{1}x_{i}\}}} + u_{i}^{*}$$
+
+y por tanto 
+
+$$1- P_{i} = P(Y=0 | X =x) =  \dfrac{1}{1 + \exp{\{ \beta_{0}-\beta_{1}x_{i} \}}} $$
+
+La división de estas dos probabilidades genera $odds$
+
+
+$$\Bigg(\dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\Bigg) =  \exp{\{\beta_{0}+ \beta_{1} \hspace{.2cm}x_{i} \}} + u_{i}^{*}$$
+Y finalmente obtenemos una expresión lineal:
+
+$$\ln \Bigg(\dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\Bigg) =  \beta_{0}+ \beta_{1} \hspace{.2cm}x_{i} + u_{i}^{*}$$
 
 ```{r}
 fx=function(x){
@@ -150,12 +169,12 @@ grid()
 
 Empleando la funcion logistica se replantea el modelo partiendo del logaritmo de la razón de probabilidades en función de una combinación lineal de las variables independientes :
 
-$$\ln \Bigg(\dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\Bigg) =  \beta_{0}+ \beta_{1} \hspace{.2cm}x_{i} + u_{i}$$
+$$\ln \Bigg(\dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\Bigg) =  \beta_{0}+ \beta_{1} \hspace{.2cm}x_{i} + u_{i}^{*}$$
 </br></br>
 
 Su estimación se puede plantear como:
 
-$$\ln \Bigg(\dfrac{P_{i}}{1-P_{i}} \Bigg) = \ln (odds) =\beta_{0} + \beta_{1} \hspace{.2cm}x_{i} + u_{i}$$
+$$\ln \Bigg(\dfrac{P_{i}}{1-P_{i}} \Bigg) = \ln (odds) =\beta_{0} + \beta_{1} \hspace{.2cm}x_{i} + u_{i}^{*}$$
 Donde :
 
 * $odds = \dfrac{P_{i}}{1-P_{i}} = \dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}$
@@ -197,7 +216,11 @@ $$\Bigg( \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\bigg\{ \wideh
 $$\Bigg( \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\big\{ -9.793942  + 0.1563404 \hspace{.2cm}x_{i}}\big\}$$
 </br></br>
 
-El coeficiente estimado $\widehat{\beta_{0}}$ corresponde al valor esperado del logaritmo de la razón de probabilidades ($\ln \Bigg(\dfrac{P_{i}}{(1-P_{i})}\Bigg)$ para un estudiante con nota cero en matemáticas.  Para leerlo enterminos de probabilidad realizamos la siguiente transformación:
+## Interpretación de los coeficientes
+
+##### $\beta_{0}$:
+
+El coeficiente estimado $\widehat{\beta_{0}}$ corresponde al valor esperado del logaritmo de la razón de probabilidades para un estudiante con nota cero en matemáticas.  Para leerlo enterminos de razon de probabilidades realizamos la siguiente transformación:
 
 
 ```{r}
@@ -207,11 +230,16 @@ b0=b[1]; names(b0)= " "
 b1=b[2]; names(b1)= " "
 #-------------------------
 x=0
-exp(b0+b1*x)
-exp(b0+b1*x)/(1-exp(b0+b1*x))
+# exp(b0+b1*x)
+# exp(b0+b1*x)/(1-exp(b0+b1*x))
+
+cat("exp{b0} = exp{-9.793942} = ", exp(b0+b1*x))
 ```
 
+Cuando $x=0$ el valor de la razón de probabilidades es de $0.00005$, indicando que la probabilidad $(1-P_{i})$ es mucho mas grande que $P_{i}$ . Lo cual es consecuente, dado que obtener un puntaje en el examen de matemáticas x=0, estima una probabilidad de obtener matricula de honor de 
 </br></br>
+
+##### $\beta_{1}$:
 
 Ahora para interpretar el aporte que genera un punto adicional en la nota de matemáticas sobre la probabilidad realizamos el siguiente cálculo:
 
@@ -221,24 +249,12 @@ $$\exp{\{ 0.1563404 \}} = 1.169224$$
 cat("exp(0.1563404) = ", exp(0.1563404) )
 ```
 
-Este valor representa  un aumento de 0.01169224 sobre la probabilidad de obtenre matricula de honor por el incremento de un punto adicional en la nota de matemáticas
-
-
-```{r, echo=FALSE}
-
-```
 
 </br></br>
 
-## Interpretación de $\widehat{\beta_{0}}$
+$\widehat{\beta_{1}}$ indica el cambio en $ln(p/(1-p))$  debido a un increento unitario en $x$,   por lo que es necesario sacar la función inversa al logaritmo que es la función exponencial
 
-Cuando $x=0$ la probabilidad de obtener matricula es de $0.00005$ %
-
-
-
-$\widehat{\beta_{1}}$ indica el cambio en $ln(p/(1-p))$  debido a un increento unitario en $x$,   por lo que es necesario sacar la funcion inversa al logaritmo que es la función exponencial
-
-Por cada unidad de aumento de $x$ los $odds$ de obtener matricula se  incrementan en : $1.17$ veces
+Por cada unidad de aumento de $x$ los $odds$ de obtener matricula se  incrementan en : $1.17$ unidades
 
 ```{r}
 exp(b1)
@@ -308,6 +324,9 @@ PseudoR2(modelo1, which = "McFadden")
 library(pscl)
 pR2(modelo1)
 ```
+
+
+Nota: Es importante resaltar que en este tipo de modelos la bondad de ajuste pasa a un segundo plano y cobra importancia el signo de los coeficientes y su significancia estadística.
 
 </br></br></br>
 

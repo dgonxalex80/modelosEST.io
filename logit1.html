@@ -509,8 +509,26 @@ dada la dificultad de ajuste para una lina reacta</li>
 <p></br></br></p>
 <p>Estos problemas los podemos superar al plantear el siguiente modelo
 teniendo como base la función de distribución acumulada $F(x) = P(X x) $
-y la función logistica <span class="math inline">\(f(x)=
-\dfrac{1}{1+\exp{\{-x\}}}\)</span></p>
+y la función logistica:</p>
+<p><span class="math display">\[f(z)= \dfrac{1}{1+\exp{\{-z\}}} =
+\dfrac{\exp{\{z\}}}{1-\exp{\{z\}}}\]</span></p>
+<p>De esta ecuación podemos definir :</p>
+<p><span class="math display">\[P_{i} = P(Y=1 | X =x)
+=  \dfrac{1}{1+\exp{\{-\beta_{0}-\beta_{1}x_{i}\}}} +  u_{i}^{*}=
+\dfrac{\exp{\{ \beta_{0}-\beta_{1}x_{i}
+\}}}{1-\exp{\{\beta_{0}-\beta_{1}x_{i}\}}} + u_{i}^{*}\]</span></p>
+<p>y por tanto</p>
+<p><span class="math display">\[1- P_{i} = P(Y=0 | X =x) =  \dfrac{1}{1
++ \exp{\{ \beta_{0}-\beta_{1}x_{i} \}}} \]</span></p>
+<p>La división de estas dos probabilidades genera <span
+class="math inline">\(odds\)</span></p>
+<p><span
+class="math display">\[\Bigg(\dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\Bigg)
+=  \exp{\{\beta_{0}+ \beta_{1} \hspace{.2cm}x_{i} \}} +
+u_{i}^{*}\]</span> Y finalmente obtenemos una expresión lineal:</p>
+<p><span class="math display">\[\ln
+\Bigg(\dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\Bigg) =  \beta_{0}+ \beta_{1}
+\hspace{.2cm}x_{i} + u_{i}^{*}\]</span></p>
 <pre class="r"><code>fx=function(x){
    1/(1+exp(-x))
 }
@@ -525,11 +543,11 @@ logaritmo de la razón de probabilidades en función de una combinación
 lineal de las variables independientes :</p>
 <p><span class="math display">\[\ln
 \Bigg(\dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\Bigg) =  \beta_{0}+ \beta_{1}
-\hspace{.2cm}x_{i} + u_{i}\]</span> </br></br></p>
+\hspace{.2cm}x_{i} + u_{i}^{*}\]</span> </br></br></p>
 <p>Su estimación se puede plantear como:</p>
 <p><span class="math display">\[\ln \Bigg(\dfrac{P_{i}}{1-P_{i}} \Bigg)
-= \ln (odds) =\beta_{0} + \beta_{1} \hspace{.2cm}x_{i} + u_{i}\]</span>
-Donde :</p>
+= \ln (odds) =\beta_{0} + \beta_{1} \hspace{.2cm}x_{i} +
+u_{i}^{*}\]</span> Donde :</p>
 <ul>
 <li><p><span class="math inline">\(odds = \dfrac{P_{i}}{1-P_{i}} =
 \dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\)</span></p></li>
@@ -592,50 +610,52 @@ x_{i}}\bigg\}\]</span> </br></br></p>
 <p><span class="math display">\[\Bigg(
 \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\big\{
 -9.793942  + 0.1563404 \hspace{.2cm}x_{i}}\big\}\]</span> </br></br></p>
+</div>
+<div id="interpretación-de-los-coeficientes" class="section level2">
+<h2>Interpretación de los coeficientes</h2>
+<div id="beta_0" class="section level5">
+<h5><span class="math inline">\(\beta_{0}\)</span>:</h5>
 <p>El coeficiente estimado <span
 class="math inline">\(\widehat{\beta_{0}}\)</span> corresponde al valor
-esperado del logaritmo de la razón de probabilidades (<span
-class="math inline">\(\ln \Bigg(\dfrac{P_{i}}{(1-P_{i})}\Bigg)\)</span>
-para un estudiante con nota cero en matemáticas. Para leerlo enterminos
-de probabilidad realizamos la siguiente transformación:</p>
+esperado del logaritmo de la razón de probabilidades para un estudiante
+con nota cero en matemáticas. Para leerlo enterminos de razon de
+probabilidades realizamos la siguiente transformación:</p>
 <pre class="r"><code># coeficientes estimados
 b=modelo1$coefficients
 b0=b[1]; names(b0)= &quot; &quot;
 b1=b[2]; names(b1)= &quot; &quot;
 #-------------------------
 x=0
-exp(b0+b1*x)</code></pre>
-<pre><code>             
-5.578854e-05 </code></pre>
-<pre class="r"><code>exp(b0+b1*x)/(1-exp(b0+b1*x))</code></pre>
-<pre><code>             
-5.579165e-05 </code></pre>
-<p></br></br></p>
+# exp(b0+b1*x)
+# exp(b0+b1*x)/(1-exp(b0+b1*x))
+
+cat(&quot;exp{b0} = exp{-9.793942} = &quot;, exp(b0+b1*x))</code></pre>
+<pre><code>exp{b0} = exp{-9.793942} =  5.578854e-05</code></pre>
+<p>Cuando <span class="math inline">\(x=0\)</span> el valor de la razón
+de probabilidades es de <span class="math inline">\(0.00005\)</span>,
+indicando que la probabilidad <span
+class="math inline">\((1-P_{i})\)</span> es mucho mas grande que <span
+class="math inline">\(P_{i}\)</span> . Lo cual es consecuente, dado que
+obtener un puntaje en el examen de matemáticas x=0, estima una
+probabilidad de obtener matricula de honor de </br></br></p>
+</div>
+<div id="beta_1" class="section level5">
+<h5><span class="math inline">\(\beta_{1}\)</span>:</h5>
 <p>Ahora para interpretar el aporte que genera un punto adicional en la
 nota de matemáticas sobre la probabilidad realizamos el siguiente
 cálculo:</p>
 <p><span class="math display">\[\exp{\{ 0.1563404 \}} =
 1.169224\]</span></p>
 <pre><code>exp(0.1563404) =  1.169224</code></pre>
-<p>Este valor representa un aumento de 0.01169224 sobre la probabilidad
-de obtenre matricula de honor por el incremento de un punto adicional en
-la nota de matemáticas</p>
 <p></br></br></p>
-</div>
-<div id="interpretación-de-widehatbeta_0" class="section level2">
-<h2>Interpretación de <span
-class="math inline">\(\widehat{\beta_{0}}\)</span></h2>
-<p>Cuando <span class="math inline">\(x=0\)</span> la probabilidad de
-obtener matricula es de <span class="math inline">\(0.00005\)</span>
-%</p>
 <p><span class="math inline">\(\widehat{\beta_{1}}\)</span> indica el
 cambio en <span class="math inline">\(ln(p/(1-p))\)</span> debido a un
 increento unitario en <span class="math inline">\(x\)</span>, por lo que
-es necesario sacar la funcion inversa al logaritmo que es la función
+es necesario sacar la función inversa al logaritmo que es la función
 exponencial</p>
 <p>Por cada unidad de aumento de <span class="math inline">\(x\)</span>
 los <span class="math inline">\(odds\)</span> de obtener matricula se
-incrementan en : <span class="math inline">\(1.17\)</span> veces</p>
+incrementan en : <span class="math inline">\(1.17\)</span> unidades</p>
 <pre class="r"><code>exp(b1)</code></pre>
 <pre><code>         
 1.169224 </code></pre>
@@ -663,8 +683,9 @@ abline(h=.50, col=&quot;red&quot;)
 
 
 grid()</code></pre>
-<p><img src="logit1_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+<p><img src="logit1_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p></br></br></br></p>
+</div>
 </div>
 <div id="bondad-de-ajuste-del-modelo" class="section level2">
 <h2>Bondad de ajuste del modelo</h2>
@@ -679,7 +700,7 @@ observaciones   0   1
             1  27  22</code></pre>
 <pre class="r"><code>mosaic(mc, shade = T, colorize = T,
        gp = gpar(fill = matrix(c(&quot;#447270&quot;, &quot;#f6b915&quot;, &quot;#f6b915&quot;,&quot;#447270&quot;), 2, 2)))</code></pre>
-<p><img src="logit1_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="logit1_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 <p>Cuenta <span class="math inline">\(R^{2}\)</span></p>
 <pre class="r"><code>cuenta_R2= sum(diag(mc))/sum(mc)
 cuenta_R2</code></pre>
@@ -693,6 +714,9 @@ pR2(modelo1)</code></pre>
 <pre><code>fitting null model for pseudo-r2</code></pre>
 <pre><code>         llh      llhNull           G2     McFadden         r2ML         r2CU 
  -83.5366186 -111.3550233   55.6368095    0.2498172    0.2428425    0.3615832 </code></pre>
+<p>Nota: Es importante resaltar que en este tipo de modelos la bondad de
+ajuste pasa a un segundo plano y cobra importancia el signo de los
+coeficientes y su significancia estadística.</p>
 <p></br></br></br></p>
 </div>
 <div id="predicción" class="section level2">

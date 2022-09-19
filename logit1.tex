@@ -374,12 +374,15 @@ Number of Fisher Scoring iterations: 5
 El modelo estimado en su forma original :
 
 \[\ln \Bigg( \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \widehat{\beta_{0}} + \widehat{\beta_{1}} \hspace{.2cm}x_{i}\]
+
 Utilizamos la función inversa del logaritmo
 
 \[\Bigg( \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\bigg\{ \widehat{\beta_{0}} + \widehat{\beta_{1}} \hspace{.2cm} x_{i}}\bigg\}\]
+
 \[\Bigg( \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\big\{ -9.793942  + 0.1563404 \hspace{.2cm}x_{i}}\big\}\]
+
 El coeficiente estimado \(\widehat{\beta_{0}}\) corresponde al valor
-esperado del logaritmo de la razon de probabilidades
+esperado del logaritmo de la razón de probabilidades
 (\(\ln \Bigg(\dfrac{P_{i}}{(1-P_{i})}\Bigg)\) para un estudiante con
 nota cero en matemáticas. Para leerlo enterminos de probabilidad
 realizamos la siguiente transformación:
@@ -427,7 +430,7 @@ obtenre matricula de honor por el incremento de un punto adicional en la
 nota de matemáticas
 
 \hypertarget{interpretaciuxf3n-de-widehatbeta_0}{%
-\paragraph{\texorpdfstring{Interpretación de
+\subsection{\texorpdfstring{Interpretación de
 \(\widehat{\beta_{0}}\)}{Interpretación de \textbackslash widehat\{\textbackslash beta\_\{0\}\}}}\label{interpretaciuxf3n-de-widehatbeta_0}}
 
 Cuando \(x=0\) la probabilidad de obtener matricula es de \(0.00005\) \%
@@ -489,6 +492,10 @@ matematicas   0.1093783  0.2103937
 \end{Shaded}
 
 \includegraphics{logit1_files/figure-latex/unnamed-chunk-13-1.pdf}
+
+\hypertarget{bondad-de-ajuste-del-modelo}{%
+\subsection{Bondad de ajuste del
+modelo}\label{bondad-de-ajuste-del-modelo}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -556,6 +563,9 @@ fitting null model for pseudo-r2
          llh      llhNull           G2     McFadden         r2ML         r2CU 
  -83.5366186 -111.3550233   55.6368095    0.2498172    0.2428425    0.3615832 
 \end{verbatim}
+
+\hypertarget{predicciuxf3n}{%
+\subsection{Predicción}\label{predicciuxf3n}}
 
 Predecir la probabilidad de que un estudiante pueda tener matricuala de
 honor con un puntaje en matemáticas de 70 puntos
