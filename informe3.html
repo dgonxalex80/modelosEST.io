@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="David Arango  Daniel Gonzalez" />
+
+
+<title>Informe 3</title>
+
+<script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"> </a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Modelos Estadísticos</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Unidad 1
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="simulaMCO.html">simulación 1</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Unidad 2
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="modelo1.html">Modelo RLS</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Unidad 3
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="logit1.html">Modelo Logit</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore"><strong>Informe 3</strong></h1>
+<h3 class="subtitle"><span style="color:#ad6395"><strong>Unidad
+3</strong></span></h3>
+<h4 class="author">David Arango </br> Daniel Gonzalez</h4>
+
+</div>
+
+
+<p></br></br></p>
+<div id="primer-punto" class="section level1">
+<h1>Primer Punto</h1>
+<p>Con base en los datos de rotación realizar los puntos 1 a 7:</p>
+<p>library(readxl) datos = read_excel(“~/Desktop/Datos_Rotación.xlsx”)
+names(datos)</p>
+<div id="rotación-edad" class="section level2">
+<h2>[1] “Rotación” “Edad”</h2>
+</div>
+<div id="viaje-de-negocios-departamento" class="section level2">
+<h2>[3] “Viaje de Negocios” “Departamento”</h2>
+</div>
+<div id="distancia_casa-educación" class="section level2">
+<h2>[5] “Distancia_Casa” “Educación”</h2>
+</div>
+<div id="campo_educación-satisfacción_ambiental" class="section level2">
+<h2>[7] “Campo_Educación” “Satisfacción_Ambiental”</h2>
+</div>
+<div id="genero-cargo" class="section level2">
+<h2>[9] “Genero” “Cargo”</h2>
+</div>
+<div id="satisfación_laboral-estado_civil" class="section level2">
+<h2>[11] “Satisfación_Laboral” “Estado_Civil”</h2>
+</div>
+<div id="ingreso_mensual-trabajos_anteriores" class="section level2">
+<h2>[13] “Ingreso_Mensual” “Trabajos_Anteriores”</h2>
+</div>
+<div id="horas_extra-porcentaje_aumento_salarial"
+class="section level2">
+<h2>[15] “Horas_Extra” “Porcentaje_aumento_salarial”</h2>
+</div>
+<div id="rendimiento_laboral-años_experiencia" class="section level2">
+<h2>[17] “Rendimiento_Laboral” “Años_Experiencia”</h2>
+</div>
+<div id="capacitaciones-equilibrio_trabajo_vida" class="section level2">
+<h2>[19] “Capacitaciones” “Equilibrio_Trabajo_Vida”</h2>
+</div>
+<div id="antigüedad-antigüedad_cargo" class="section level2">
+<h2>[21] “Antigüedad” “Antigüedad_Cargo”</h2>
+</div>
+<div id="años_ultima_promoción-años_acargo_con_mismo_jefe"
+class="section level2">
+<h2>[23] “Años_ultima_promoción” “Años_acargo_con_mismo_jefe”</h2>
+<p>Seleccionar 3 variables categóricas (distintas de rotación) y 3
+variables cuantitativas, que consideren estén relacionadas con la
+rotación. Nota: Justificar por que estas variables están relacionadas y
+que tipo de relación se espera (Hipótesis). Ejemplo: Se espera que las
+horas extra se relacionen con la rotación ya que las personas podrían
+desgastarse mas al trabajar horas extra y descuidan aspectos personales.
+La hipótesis es que las personas que trabajan horas extra tienen mayor
+posibilidad de rotar que las que no trabajan extra. (serian 6, una por
+variable).</p>
+<p>Realizar un análisis univariado (caracterización). Nota: Los
+indicadores o gráficos se usan dependiendo del tipo de variable (cuanti
+o cuali). Incluir interpretaciones de la rotación.</p>
+<p>Realizar un análisis de bivariado en donde la variable respuesta sea
+la rotación codificada de la siguiente manera (y=1 es si rotación, y=0
+es no rotación), con base en estos resultados identifique cuales son las
+variables determinantes de la rotación e interpretar el signo del
+coeficiente estimado. Compare estos resultados con la hipotesis
+planteada en el punto 2.</p>
+<p>Realizar la estimación de un modelo de regresión logistico en el cual
+la variable respuesta es rotación (y=1 es si rotación, y=0 es no
+rotación) y las covariables las 6 seleccionadas. Interprete los
+coeficientes del modelo y la significancia de los parametros.</p>
+<p>Evaluar el poder predictivo del modelo con base en la curva ROC y el
+AUC.</p>
+<p>Predeccir la probabilida de que un individuo (hipotetico) rote y
+defina un corte para decidir si se debe intervenir a este empleado o no
+(posible estrategia para motivar al empleado).</p>
+<p>En las conclusiones se discute sobre cual seria la estrategia para
+disminuir la rotación en la empresa (con base en las variables que
+resultaron significativas en el punto 3). Ejemplo: Mejorar el ambiente
+laboral, los incentivos económicos, distribuir la carga de horas extra
+(menos turnos y mas personal).</p>
+</div>
+</div>
+<div id="segundo-punto" class="section level1">
+<h1>Segundo Punto</h1>
+<p>Con base en los datos de créditos proponga un modelo de regresión
+logístico múltiple que permita predecir el riesgo de default en función
+de las covariables que considere importantes y seleccionándolas de
+acuerdo con un proceso adecuado. Tenga en cuenta realizar una evaluación
+de la significancia de los parámetros, interpretación y proponga un
+método de evaluación por medio de validación cruzada. Presente métricas
+apropiadas como el AUC y la curva ROC.</p>
+<p>Nota: El informe  se presenta en parejas en formato Rmd publicado en
+Rpubs y su enlace entregado en enlace en la plataforma Bs.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

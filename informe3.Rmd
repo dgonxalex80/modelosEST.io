@@ -1,0 +1,82 @@
+---
+title: "**Informe 3**"
+author: "David Arango </br> Daniel Gonzalez"
+subtitle: <span style="color:#ad6395">**Unidad 3**</span>
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '2'
+  html_document:
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    theme: flatly
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(comment = NA, warning = FALSE, message = FALSE)
+
+# colores
+c0= "#b0394a"
+c1= "#ad6395"
+c2= "#a391c4"
+c3= "#8acfe6"
+c4= "#646420"
+c5= "#db524f"
+
+library(memisc)
+library(MASS)
+library(lattice)
+library(stats)
+library(tidyverse)
+```
+
+</br></br>
+
+#  Primer Punto
+
+Con base en los datos de rotación realizar los puntos 1 a 7:
+
+library(readxl)
+datos = read_excel("~/Desktop/Datos_Rotación.xlsx")
+names(datos)
+
+## [1] "Rotación" "Edad"
+## [3] "Viaje de Negocios" "Departamento"
+## [5] "Distancia_Casa" "Educación"
+## [7] "Campo_Educación" "Satisfacción_Ambiental"
+## [9] "Genero" "Cargo"
+## [11] "Satisfación_Laboral" "Estado_Civil"
+## [13] "Ingreso_Mensual" "Trabajos_Anteriores"
+## [15] "Horas_Extra" "Porcentaje_aumento_salarial"
+## [17] "Rendimiento_Laboral" "Años_Experiencia"
+## [19] "Capacitaciones" "Equilibrio_Trabajo_Vida"
+## [21] "Antigüedad" "Antigüedad_Cargo"
+## [23] "Años_ultima_promoción" "Años_acargo_con_mismo_jefe"
+
+Seleccionar 3 variables categóricas (distintas de rotación) y 3 variables cuantitativas, que consideren estén relacionadas con la rotación. Nota: Justificar por que estas variables están relacionadas y que tipo de relación se espera (Hipótesis). Ejemplo: Se espera que las horas extra se relacionen con la rotación ya que las personas podrían desgastarse mas al trabajar horas extra y descuidan aspectos personales. La hipótesis es que las personas que trabajan horas extra tienen mayor posibilidad de rotar que las que no trabajan extra. (serian 6, una por variable).
+
+Realizar un análisis univariado (caracterización). Nota: Los indicadores o gráficos se usan dependiendo del tipo de variable (cuanti o cuali). Incluir interpretaciones de la rotación.
+
+Realizar un análisis de bivariado en donde la variable respuesta sea la rotación codificada de la siguiente manera (y=1 es si rotación, y=0 es no rotación), con base en estos resultados identifique cuales son las variables determinantes de la rotación e interpretar el signo del coeficiente estimado. Compare estos resultados con la hipotesis planteada en el punto 2.
+
+Realizar la estimación de un modelo de regresión logistico en el cual la variable respuesta es rotación (y=1 es si rotación, y=0 es no rotación) y las covariables las 6 seleccionadas. Interprete los coeficientes del modelo y la significancia de los parametros.
+
+Evaluar el poder predictivo del modelo con base en la curva ROC y el AUC.
+
+Predeccir la probabilida de que un individuo (hipotetico) rote y defina un corte para decidir si se debe intervenir a este empleado o no (posible estrategia para motivar al empleado).
+
+En las conclusiones se discute sobre cual seria la estrategia para disminuir la rotación en la empresa (con base en las variables que resultaron significativas en el punto 3). Ejemplo: Mejorar el ambiente laboral, los incentivos económicos, distribuir la carga de horas extra (menos turnos y mas personal).
+
+
+
+
+
+# Segundo Punto
+
+Con base en los datos de créditos proponga un modelo de regresión logístico múltiple que permita predecir el riesgo de default en función de las covariables que considere importantes y seleccionándolas de acuerdo con un proceso adecuado. Tenga en cuenta realizar una evaluación de la significancia de los parámetros, interpretación y proponga un método de evaluación por medio de validación cruzada. Presente métricas apropiadas como el AUC y la curva ROC.
+
+
+
+Nota: El informe  se presenta en parejas en formato Rmd publicado en Rpubs y su enlace entregado en enlace en la plataforma Bs.

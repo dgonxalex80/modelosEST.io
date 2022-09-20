@@ -510,8 +510,9 @@ dada la dificultad de ajuste para una lina reacta</li>
 </ul>
 <p></br></br></p>
 <p>Estos problemas los podemos superar al plantear el siguiente modelo
-teniendo como base la función de distribución acumulada $F(x) = P(X x) $
-y la función logistica:</p>
+teniendo como base la función de distribución acumulada <span
+class="math inline">\(F(x) = P(X \leq x)\)</span> y la función
+logistica:</p>
 <p><span class="math display">\[f(z)= \dfrac{1}{1+\exp{\{-z\}}} =
 \dfrac{\exp{\{z\}}}{1-\exp{\{z\}}}\]</span></p>
 <p>De esta ecuación podemos definir :</p>
@@ -556,22 +557,80 @@ u_{i}^{*}\]</span> Donde :</p>
 <li><p><span class="math inline">\(\ln(odds) = \ln
 \Bigg(\dfrac{P_{i}}{1-P_{i}} \Bigg) = \ln
 \Bigg(\dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\Bigg)\)</span></p></li>
-<li><p><span class="math inline">\(\ln \Bigg(\dfrac{1}{0}\Bigg)
-\hspace{.5cm}\text{si el estudiante RECIBE matricula de
-honor}\)</span></p></li>
-<li><p><span class="math inline">\(\ln \Bigg(\dfrac{0}{1}\Bigg)
-\hspace{.5cm}\text{si el estudiante NO RECIBE matricula de
-honor}\)</span></p></li>
-<li><p>Si <span class="math inline">\(p = 1-p\)</span> entonces <span
-class="math inline">\(odds = 1\)</span> , por tanto <span
-class="math inline">\(\ln(odds) = 0\)</span></p></li>
-<li><p>Si <span class="math inline">\(p &lt; 1-p\)</span> entonces <span
-class="math inline">\(odds &lt; 1\)</span> , por tanto <span
-class="math inline">\(\ln(odds) &lt; 0\)</span></p></li>
-<li><p>Si <span class="math inline">\(p &gt; 1-p\)</span> entonces <span
-class="math inline">\(odds &gt; 1\)</span> , por tanto <span
-class="math inline">\(\ln(odds) &gt; 0\)</span></p></li>
 </ul>
+<p></br></p>
+<ul>
+<li><span class="math inline">\(\ln \Bigg(\dfrac{1}{0}\Bigg)
+\hspace{.5cm}\text{si el estudiante RECIBE matricula de
+honor}\)</span></li>
+</ul>
+<p></br></p>
+<ul>
+<li><span class="math inline">\(\ln \Bigg(\dfrac{0}{1}\Bigg)
+\hspace{.5cm}\text{si el estudiante NO RECIBE matricula de
+honor}\)</span></li>
+</ul>
+<p></br></p>
+<table>
+<colgroup>
+<col width="4%" />
+<col width="18%" />
+<col width="10%" />
+<col width="39%" />
+<col width="11%" />
+<col width="16%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td align="left">Si</td>
+<td align="left"><span class="math inline">\(P_{i} =
+1-P_{i}\)</span></td>
+<td align="left">entonces</td>
+<td align="left"><span class="math inline">\(\dfrac{P_{i}}{1-P_{i}} =
+odds =1\)</span>,</td>
+<td>por tanto</td>
+<td align="left"><span class="math inline">\(\ln(odds) = 0\)</span></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Si</td>
+<td align="left"><span class="math inline">\(P_{i} &lt;
+1-P_{i}\)</span></td>
+<td align="left">entonces</td>
+<td align="left"><span class="math inline">\(\dfrac{P_{i}}{1-P_{i}} =
+odds &lt; 1\)</span>,</td>
+<td>por tanto</td>
+<td align="left"><span class="math inline">\(\ln(odds) &lt;
+0\)</span></td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"></td>
+<td></td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Si</td>
+<td align="left"><span class="math inline">\(P_{i} &gt;
+1-P_{i}\)</span></td>
+<td align="left">entonces</td>
+<td align="left"><span class="math inline">\(\dfrac{P_{i}}{1-P_{i}} =
+odds &gt; 1\)</span>,</td>
+<td>por tanto</td>
+<td align="left"><span class="math inline">\(\ln(odds) &gt;
+0\)</span></td>
+</tr>
+</tbody>
+</table>
 <p></br></br></p>
 <p>Para realizar la estimación del modelo logit utilizamos la función
 <code>glm</code></p>
@@ -615,23 +674,15 @@ x_{i}}\bigg\}\]</span> </br></br></p>
 </div>
 <div id="interpretación-de-los-coeficientes" class="section level2">
 <h2>Interpretación de los coeficientes</h2>
+<p></br></br></p>
 <div id="beta_0" class="section level5">
 <h5><span class="math inline">\(\beta_{0}\)</span>:</h5>
+<p></br></p>
 <p>El coeficiente estimado <span
 class="math inline">\(\widehat{\beta_{0}}\)</span> corresponde al valor
 esperado del logaritmo de la razón de probabilidades para un estudiante
-con nota cero en matemáticas. Para leerlo enterminos de razon de
+con nota cero en matemáticas. Para leerlo enterminos de razón de
 probabilidades realizamos la siguiente transformación:</p>
-<pre class="r"><code># coeficientes estimados
-b=modelo1$coefficients
-b0=b[1]; names(b0)= &quot; &quot;
-b1=b[2]; names(b1)= &quot; &quot;
-#-------------------------
-x=0
-# exp(b0+b1*x)
-# exp(b0+b1*x)/(1-exp(b0+b1*x))
-
-cat(&quot;exp{b0} = exp{-9.793942} = &quot;, exp(b0+b1*x))</code></pre>
 <pre><code>exp{b0} = exp{-9.793942} =  5.578854e-05</code></pre>
 <p>Cuando <span class="math inline">\(x=0\)</span> el valor de la razón
 de probabilidades es de <span class="math inline">\(0.00005\)</span>,
@@ -639,10 +690,12 @@ indicando que la probabilidad <span
 class="math inline">\((1-P_{i})\)</span> es mucho mas grande que <span
 class="math inline">\(P_{i}\)</span> . Lo cual es consecuente, dado que
 obtener un puntaje en el examen de matemáticas x=0, estima una
-probabilidad de obtener matricula de honor de </br></br></p>
+probabilidad de obtener matricula de honor de</p>
+<p></br></br></p>
 </div>
 <div id="beta_1" class="section level5">
 <h5><span class="math inline">\(\beta_{1}\)</span>:</h5>
+<p></br></p>
 <p>Ahora para interpretar el aporte que genera un punto adicional en la
 nota de matemáticas sobre la probabilidad realizamos el siguiente
 cálculo:</p>
@@ -725,15 +778,18 @@ coeficientes y su significancia estadística.</p>
 <h2>Predicción</h2>
 <p>Predecir la probabilidad de que un estudiante pueda tener matricuala
 de honor con un puntaje en matemáticas de 70 puntos</p>
-<pre class="r"><code>newdata1 &lt;- data.frame(matematicas=c(30,40,50,60,70))
+<pre class="r"><code>newdata1 &lt;- data.frame(matematicas=c(30,40,50, 55, 60,65,70, 75))
 newdata1$rankP &lt;- predict(modelo1, newdata = newdata1, type = &quot;response&quot;)
 newdata1</code></pre>
 <pre><code>  matematicas       rankP
 1          30 0.006037368
 2          40 0.028186305
 3          50 0.121647088
-4          60 0.398068206
-5          70 0.759489505</code></pre>
+4          55 0.232326188
+5          60 0.398068206
+6          65 0.591019371
+7          70 0.759489505
+8          75 0.873424703</code></pre>
 </div>
 </div>
 

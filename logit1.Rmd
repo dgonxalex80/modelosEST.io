@@ -134,7 +134,7 @@ Como se puede observar este modelo no permite ajustar una linea que represente l
 
 </br></br>
 
-Estos problemas los podemos superar al plantear el siguiente modelo teniendo como base la función de distribución acumulada $F(x) = P(X \leq x) $ y la función logistica:  
+Estos problemas los podemos superar al plantear el siguiente modelo teniendo como base la función de distribución acumulada $F(x) = P(X \leq x)$ y la función logistica:  
 
 $$f(z)= \dfrac{1}{1+\exp{\{-z\}}} = \dfrac{\exp{\{z\}}}{1-\exp{\{z\}}}$$
 
@@ -181,15 +181,23 @@ Donde :
 
 * $\ln(odds) = \ln \Bigg(\dfrac{P_{i}}{1-P_{i}} \Bigg) = \ln \Bigg(\dfrac{P(Y=k|X=x)}{1-P(Y=k|X=x)}\Bigg)$
 
+</br>
+
 * $\ln \Bigg(\dfrac{1}{0}\Bigg) \hspace{.5cm}\text{si el estudiante RECIBE matricula de honor}$
+
+</br>
 
 * $\ln \Bigg(\dfrac{0}{1}\Bigg) \hspace{.5cm}\text{si el estudiante NO RECIBE matricula de honor}$
 
-* Si $p = 1-p$       entonces  $odds = 1$  , por tanto $\ln(odds) = 0$      
+</br>
 
-* Si $p < 1-p$       entonces  $odds < 1$  , por tanto $\ln(odds) < 0$      
-
-* Si $p > 1-p$       entonces  $odds > 1$  , por tanto $\ln(odds) > 0$      
+|    |                  |          |                                      |           |                |
+|:---|:-----------------|:---------|:-------------------------------------|-----------|:---------------|
+| Si |$P_{i} = 1-P_{i}$ | entonces |$\dfrac{P_{i}}{1-P_{i}} = odds =1$,   | por tanto | $\ln(odds) = 0$|      
+|    |                  |          |                                      |           |                |
+| Si | $P_{i} < 1-P_{i}$| entonces | $\dfrac{P_{i}}{1-P_{i}} = odds < 1$,| por tanto | $\ln(odds) < 0$|      
+|    |                  |          |                                      |           |                |
+| Si | $P_{i} > 1-P_{i}$| entonces | $\dfrac{P_{i}}{1-P_{i}} = odds > 1$, | por tanto |$\ln(odds) > 0$ |     
 
 
 </br></br>
@@ -218,12 +226,16 @@ $$\Bigg( \dfrac{\widehat{P_{i}}}{1-\widehat{P_{i}}} \Bigg) = \exp{\big\{ -9.7939
 
 ## Interpretación de los coeficientes
 
+</br></br>
+
 ##### $\beta_{0}$:
 
-El coeficiente estimado $\widehat{\beta_{0}}$ corresponde al valor esperado del logaritmo de la razón de probabilidades para un estudiante con nota cero en matemáticas.  Para leerlo enterminos de razon de probabilidades realizamos la siguiente transformación:
+</br>
+
+El coeficiente estimado $\widehat{\beta_{0}}$ corresponde al valor esperado del logaritmo de la razón de probabilidades para un estudiante con nota cero en matemáticas.  Para leerlo enterminos de razón de probabilidades realizamos la siguiente transformación:
 
 
-```{r}
+```{r, echo=FALSE}
 # coeficientes estimados
 b=modelo1$coefficients
 b0=b[1]; names(b0)= " "
@@ -237,9 +249,12 @@ cat("exp{b0} = exp{-9.793942} = ", exp(b0+b1*x))
 ```
 
 Cuando $x=0$ el valor de la razón de probabilidades es de $0.00005$, indicando que la probabilidad $(1-P_{i})$ es mucho mas grande que $P_{i}$ . Lo cual es consecuente, dado que obtener un puntaje en el examen de matemáticas x=0, estima una probabilidad de obtener matricula de honor de 
+
 </br></br>
 
 ##### $\beta_{1}$:
+
+</br>
 
 Ahora para interpretar el aporte que genera un punto adicional en la nota de matemáticas sobre la probabilidad realizamos el siguiente cálculo:
 
@@ -336,7 +351,7 @@ Predecir la probabilidad de que un estudiante pueda tener matricuala de honor co
 
 
 ```{r}
-newdata1 <- data.frame(matematicas=c(30,40,50,60,70))
+newdata1 <- data.frame(matematicas=c(30,40,50, 55, 60,65,70, 75))
 newdata1$rankP <- predict(modelo1, newdata = newdata1, type = "response")
 newdata1
 
