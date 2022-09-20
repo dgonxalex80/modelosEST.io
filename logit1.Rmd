@@ -86,7 +86,7 @@ Utilizamos la función table() para encontrar la distribución de la variable ca
 </br>
 
 ```{r}
-table(datos$matricula)
+table(matricula)
 ```
 
 </br></br>
